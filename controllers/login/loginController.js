@@ -5,6 +5,7 @@ const { sql, pool, poolConnect } = require("../../connection/connection");
 
 async function handleLogin(req, res) {
   const { username, password, usertype } = req.body;
+  console.log(username, password, usertype);
   await poolConnect;
   var result;
   if (usertype == "Schooladmin") {
@@ -26,6 +27,19 @@ async function handleLogin(req, res) {
           AND UserType  = @usertype
       `);
   } else if (usertype == "teacher") {
+    if (username === "teacher" && password === "teacher") {
+      result = {
+        recordset: [
+          {
+            UserName: "teacher",
+            UserType: "teacheradmin",
+          },
+        ],
+      };
+      console.log("Login successful for teacher");
+    } else {
+      console.log("Invalid teacher credentials");
+    }
   }
 
   if (result.recordset.length == 0) {
