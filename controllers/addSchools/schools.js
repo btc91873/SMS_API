@@ -52,15 +52,6 @@ async function handleAddSchool(req, res) {
 
     const schoolLogo = req.file?.filename || null; // ✅ use uploaded file
 
-    console.log("Received data: ", {
-      schoolName,
-      schoolLogo,
-      startDate,
-      endDate,
-      adminEmail,
-      adminPassword,
-    });
-
     await poolConnect;
 
     await pool
@@ -79,7 +70,6 @@ async function handleAddSchool(req, res) {
 
     res.status(201).json({ message: "✅ School added successfully!" });
   } catch (err) {
-    console.error("❌ SQL Error:", err);
     res
       .status(500)
       .json({ error: "❌ Failed to add school.", details: err.message });
