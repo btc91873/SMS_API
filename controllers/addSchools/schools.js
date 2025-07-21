@@ -7,14 +7,6 @@ async function handleAddSchool(req, res) {
 
     const schoolLogo = "vendor"; // file name from multer
 
-    console.log(" Received data: ", {
-      schoolName,
-      schoolLogo,
-      startDate,
-      endDate,
-      adminEmail,
-      adminPassword,
-    });
 
     await poolConnect;
 
@@ -34,7 +26,7 @@ async function handleAddSchool(req, res) {
 
     res.status(201).json({ message: "✅ School added successfully!" });
   } catch (err) {
-    console.error("❌ SQL Error:", err);
+
     res
       .status(500)
       .json({ error: "Failed to add school.", details: err.message });

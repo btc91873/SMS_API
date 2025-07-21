@@ -1,10 +1,12 @@
 const express = require("express");
-const verifyRoute = require("../middleware/verifyRoute");
-const {
-  getAllAttendance,
-} = require("../controllers/teacher/getAttendenceData");
+const { getAllTeachers, addTeacher, updateTeacher, getTeacherById } = require("../controllers/teacherform");
+
+const authenticateJWT = require("../middleware/authMiddleware");
 const teacherRouter = express.Router();
 
-teacherRouter.get("/getAttendence", verifyRoute, getAllAttendance);
+teacherRouter.get("/getTeachers", authenticateJWT, getAllTeachers);
+teacherRouter.post("/addTeacher", authenticateJWT, addTeacher);
+teacherRouter.put("/update/:id",authenticateJWT, updateTeacher);
+teacherRouter.get("/:id", authenticateJWT, getTeacherById);
 
 module.exports = teacherRouter;
