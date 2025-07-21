@@ -51,7 +51,7 @@ const getClass = async (req, res) => {
   try {
     await poolConnect;
 
-    const result = await pool.request().query("select * from dbo.Classes");
+    const result = await pool.request().query("select * from dbo.Sections");
 
     res.status(200).json({ record: result.recordset });
   } catch (err) {
