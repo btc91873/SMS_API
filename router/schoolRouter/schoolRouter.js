@@ -1,24 +1,33 @@
 const express = require("express");
 const router = express.Router();
+const { handleAddSchool } = require("../../controllers/addSchools/schools");
 const multer = require("multer");
 const path = require("path");
-const { handleAddSchool } = require("../../controllers/addSchools/schools");
+const fs = require("fs");
 
-// ⬇️ Configure multer
+// ✅ FIXED path: go two levels up to reach /uploads
+const uploadsPath = path.join(__dirname, "../../uploads");
+
+// ✅ Ensure the uploads folder exists
+if (!fs.existsSync(uploadsPath)) {
+  fs.mkdirSync(uploadsPath, { recursive: true });
+}
+
+// ✅ Multer setup
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/"); // Ensure this folder exists
+  destination: function (req, file, cb) {
+    cb(null, uploadsPath);
   },
-  filename: (req, file, cb) => {
-    const uniqueName = `${Date.now()}-${file.originalname}`;
+
+  filename: function (req, file, cb) {
+    const uniqueName = Date.now() + "-" + file.originalname;
+
     cb(null, uniqueName);
   },
 });
 
 const upload = multer({ storage });
 
-// ⬇️ API Route
 router.post("/add", upload.single("schoolLogo"), handleAddSchool);
 
-// ✅ Export the router
 module.exports = router;
