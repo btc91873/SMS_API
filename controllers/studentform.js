@@ -1,7 +1,7 @@
 // const express = require("express");
 // const router = express.Router();
 // // const dbConfig = require("../config/dbConfig");
- 
+
 // const {sql, pool, poolConnect} = require("../connection/connection")
 
 //  const getAllstudents = async (req, res) => {
@@ -36,7 +36,7 @@
 
 //     res.status(200).json(result.recordset);
 //   } catch (error) {
-   
+
 //     res.status(500).json({ error: "Failed to fetch students" });
 //   };
 
@@ -111,7 +111,7 @@
 
 //     res.status(200).json({ message: "Student updated successfully" });
 //   } catch (error) {
-   
+
 //     res.status(500).json({ error: "Failed to update student" });
 //   }
 // };
@@ -137,7 +137,7 @@
 
 //     res.status(200).json(result.recordset[0]);
 //   } catch (error) {
-    
+
 //     res.status(500).json({ error: "Failed to fetch student" });
 //   }
 // };
@@ -146,7 +146,7 @@
 
 
 // const addStudent = async (req, res) => {
-  
+
 //   const {
 //     firstName,
 //     lastName,
@@ -422,9 +422,34 @@ const addStudent = async (req, res) => {
   }
 };
 
+/////////////////////////////////////////////////////////////////
+
+const getStudentCount = async (req, res) => {
+  console.log("hello")
+  try {
+    await poolConnect;
+
+    const schoolId = req.user?.schoolId;
+
+    if (!schoolId) {
+      return res.status(403).json({ message: "Access denied. No school ID found." });
+    }
+
+    const result = await pool
+      .request()
+      .input("SchoolId", sql.Int, schoolId)
+      .query("SELECT COUNT(*) AS count FROM Student WHERE SchoolId = @SchoolId");
+
+    res.status(200).json({ count: result.recordset[0].count });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch student count", error });
+  }
+};
+//////////////////////////////////////////////////////--/-/////////////////////-/--------------------/////
 module.exports = {
   getAllstudents,
   updateStudent,
   addStudent,
   getStudentById,
+  getStudentCount
 };

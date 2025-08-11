@@ -76,6 +76,125 @@
 
 // module.exports = { handleLogin };
 
+
+
+
+// require("dotenv").config();
+// const jwt = require("jsonwebtoken");
+// const { sql, pool, poolConnect } = require("../../connection/connection");
+
+// async function handleLogin(req, res) {
+//   const { username, password, usertype } = req.body;
+//   await poolConnect;
+//   // if (usertype == "Schooladmin") {
+//   //   result = await pool
+//   //     .request()
+//   //     .input("username", sql.NVarChar, username)
+//   //     .input("password", sql.NVarChar, password)
+//   //     .query(`SELECT SchoolId, AdminEmail, AdminPassword FROM dbo.Schools WHERE AdminEmail = @username AND AdminPassword = @password`);
+
+//   // } else if (usertype == "superadmin") {
+//   //   result = await pool
+//   //     .request()
+//   //     .input("username", sql.NVarChar, username)
+//   //     .input("password", sql.NVarChar, password)
+//   //     .input("usertype", sql.NVarChar, usertype)
+//   //     .query(`SELECT * FROM dbo.AuthTable
+//   //          WHERE UserName  = @username
+//   //         AND Password = @password
+//   //         AND UserType  = @usertype
+//   //     `);
+//   // } 
+//   // else if (usertype == "teacher") {
+//   //   if (username === "teacher" && password === "teacher") {
+//   //     result = {
+//   //       recordset: [
+//   //         {
+//   //           UserName: "teacher",
+//   //           UserType: "teacheradmin",
+//   //         },
+//   //       ],
+//   //     };
+
+//   //   } 
+//   let result;
+
+
+//   if (usertype === "Schooladmin") {
+//     result = await pool
+//       .request()
+//       .input("username", sql.NVarChar, username)
+//       .input("password", sql.NVarChar, password).query(`
+//           SELECT AdminEmail AS UserName, 'Schooladmin' AS UserType 
+//           FROM dbo.Schools 
+//           WHERE AdminEmail = @username AND AdminPassword = @password
+//         `);
+//   } else if (usertype === "superadmin") {
+//     result = await pool
+//       .request()
+//       .input("username", sql.NVarChar, username)
+//       .input("password", sql.NVarChar, password)
+//       .input("usertype", sql.NVarChar, usertype).query(`
+//           SELECT UserName, UserType 
+//           FROM dbo.AuthTable
+//           WHERE UserName = @username AND Password = @password AND UserType = @usertype
+//         `);
+//   } else if (usertype === "teacher") {
+//     result = await pool
+//       .request()
+//       .input("username", sql.NVarChar, username)
+//       .input("password", sql.NVarChar, password).query(`
+//           SELECT email AS UserName, 'teacher' AS UserType 
+//           FROM dbo.teacherList  
+//           WHERE email = @username AND password = @password
+//         `);
+//     console.log("Login successful for teacher");
+//   } else {
+//     return res
+//       .status(400)
+//       .json({ success: false, message: "Invalid usertype" });
+//   }
+
+
+//   if (usertype === "Schooladmin" && user.SchoolId) {
+//     tokenPayload.schoolId = user.SchoolId; // ✅ only attach if exists
+//   }
+
+
+//   const accessToken = jwt.sign(tokenPayload, process.env.JWT_SECRET);
+
+//   res.cookie("token", accessToken, {
+//     httpOnly: true,
+//     sameSite: "None", // Use "Lax" or "Strict" for same-origin apps
+//     secure: false, // true only if using HTTPS
+//     maxAge: 3600000, // 1 hour
+//     sameSite: "Lax", // ✅ Fix for localhost without HTTPS
+//     secure: false,   // ✅ for development (must be true in prod HTTPS)
+//     maxAge: 3600000,
+//   });
+
+
+//   return res.status(200).json({
+//     message: "User logged in",
+//     username: user.UserName,
+//     usertype: user.UserType,
+//   });
+// }
+
+
+// // In your auth controller
+// function handleLogout(req, res) {
+//   res.clearCookie("token");
+//   res.status(200).json({ message: "Logged out" });
+// }
+
+// module.exports = { handleLogin, handleLogout };
+
+
+// // module.exports = { handleLogin };
+
+
+
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const { sql, pool, poolConnect } = require("../../connection/connection");
@@ -83,55 +202,18 @@ const { sql, pool, poolConnect } = require("../../connection/connection");
 async function handleLogin(req, res) {
   const { username, password, usertype } = req.body;
   await poolConnect;
-  var result;
-  if (usertype == "Schooladmin") {
-    result = await pool
-      .request()
-      .input("username", sql.NVarChar, username)
-      .input("password", sql.NVarChar, password)
-      .query(`SELECT SchoolId, AdminEmail, AdminPassword FROM dbo.Schools WHERE AdminEmail = @username AND AdminPassword = @password`);
 
-  } else if (usertype == "superadmin") {
-    result = await pool
-      .request()
-      .input("username", sql.NVarChar, username)
-      .input("password", sql.NVarChar, password)
-      .input("usertype", sql.NVarChar, usertype)
-      .query(`SELECT * FROM dbo.AuthTable
-           WHERE UserName  = @username
-          AND Password = @password
-          AND UserType  = @usertype
-      `);
-  } else if (usertype == "teacher") {
-<<<<<<< HEAD
-
-=======
->>>>>>> 001d22a239cab4c5f5d205fd9a0de2fbd1966f82
-    if (username === "teacher" && password === "teacher") {
-      result = {
-        recordset: [
-          {
-            UserName: "teacher",
-            UserType: "teacheradmin",
-          },
-        ],
-      };
-<<<<<<< HEAD
-
-    } else {
-    }
-
-=======
   let result;
-
+  let schoolId;
   try {
     if (usertype === "Schooladmin") {
       result = await pool
         .request()
         .input("username", sql.NVarChar, username)
-        .input("password", sql.NVarChar, password).query(`
-          SELECT AdminEmail AS UserName, 'Schooladmin' AS UserType 
-          FROM dbo.Schools 
+        .input("password", sql.NVarChar, password)
+        .query(`SELECT SchoolId, AdminEmail AS UserName, 'Schooladmin' AS UserType 
+          FROM dbo.Schools
+           
           WHERE AdminEmail = @username AND AdminPassword = @password
         `);
     } else if (usertype === "superadmin") {
@@ -139,7 +221,8 @@ async function handleLogin(req, res) {
         .request()
         .input("username", sql.NVarChar, username)
         .input("password", sql.NVarChar, password)
-        .input("usertype", sql.NVarChar, usertype).query(`
+        .input("usertype", sql.NVarChar, usertype)
+        .query(`
           SELECT UserName, UserType 
           FROM dbo.AuthTable
           WHERE UserName = @username AND Password = @password AND UserType = @usertype
@@ -148,7 +231,8 @@ async function handleLogin(req, res) {
       result = await pool
         .request()
         .input("username", sql.NVarChar, username)
-        .input("password", sql.NVarChar, password).query(`
+        .input("password", sql.NVarChar, password)
+        .query(`
           SELECT email AS UserName, 'teacher' AS UserType 
           FROM dbo.teacherList  
           WHERE email = @username AND password = @password
@@ -159,72 +243,74 @@ async function handleLogin(req, res) {
         .status(400)
         .json({ success: false, message: "Invalid usertype" });
     }
-      console.log("Invalid teacher credentials");
-    }
->>>>>>> 001d22a239cab4c5f5d205fd9a0de2fbd1966f82
-  }
 
-    if (result.recordset.length === 0) {
+    // Check if any user matched
+    if (!result || !result.recordset || result.recordset.length === 0) {
       return res
         .status(401)
         .json({ success: false, message: "Invalid credentials" });
     }
 
-  if (result.recordset.length == 0) {
-    return res.status(401).json({ success: false, message: "Invalid credentials" });
-  } else {
+    schoolId = result.recordset[0].SchoolId
+
+    if (schoolId) {
+      const schoolResult = await pool
+        .request()
+        .input("schoolId", sql.Int, schoolId)
+        .query(`
+      SELECT endDate FROM dbo.Schools WHERE SchoolId = @schoolId
+    `);
+
+      if (
+        schoolResult.recordset.length === 0 ||
+        new Date() > new Date(schoolResult.recordset[0].endDate)
+      ) {
+        return res.status(403).json({
+          success: false,
+          message: "School subscription has expired. Please contact administrator.",
+        });
+      }
+    }
+
+    console.log(schoolId)
+
     const user = result.recordset[0];
 
-    // Add schoolId to token payload for school admins
-    let tokenPayload = {
-      name: user.UserName || user.AdminEmail,
-      usertype: usertype
+    const tokenPayload = {
+      name: user.UserName,
+      usertype: user.UserType,
     };
 
     if (usertype === "Schooladmin" && user.SchoolId) {
-      tokenPayload.schoolId = user.SchoolId; // ✅ only attach if exists
+      tokenPayload.schoolId = user.SchoolId;
     }
-
 
     const accessToken = jwt.sign(tokenPayload, process.env.JWT_SECRET);
 
     res.cookie("token", accessToken, {
       httpOnly: true,
-      sameSite: "None", // Use "Lax" or "Strict" for same-origin apps
-      secure: false, // true only if using HTTPS
-      maxAge: 3600000, // 1 hour
-      sameSite: "Lax", // ✅ Fix for localhost without HTTPS
-      secure: false,   // ✅ for development (must be true in prod HTTPS)
-      maxAge: 3600000,
+      sameSite: "Lax",  // Use "None" only if using HTTPS
+      secure: false,    // Set to true in production with HTTPS
+      maxAge: 3600000,  // 1 hour
     });
-
 
     return res.status(200).json({
       message: "User logged in",
       username: user.UserName,
       usertype: user.UserType,
+      Id: schoolId ? schoolId : null
     });
+
   } catch (err) {
     console.error("Login error:", err);
-
-    return res
-
-      .status(500)
-      .json({ success: false, message: "Internal server error" });
-    res.status(200).json({
-      message: "User logged in",
-      username: tokenPayload.name,
-    });
+    return res.status(500).json({ success: false, message: "Internal server error" });
   }
-
 }
-// In your auth controller
+
+// Logout controller
 function handleLogout(req, res) {
   res.clearCookie("token");
   res.status(200).json({ message: "Logged out" });
 }
 
 module.exports = { handleLogin, handleLogout };
-
-
-// module.exports = { handleLogin };

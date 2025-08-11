@@ -6,7 +6,7 @@ const getAllTeachers = async (req, res) => {
     await poolConnect;
 
     const schoolId = req.user?.schoolId;
-const usertype = req.user?.usertype;
+    const usertype = req.user?.usertype;
 
 
 
@@ -77,9 +77,9 @@ const addTeacher = async (req, res) => {
   } = req.body;
   const schoolId = req.user?.schoolId;
 
-if (!schoolId) {
-  return res.status(403).json({ message: "Unauthorized: No schoolId found" });
-}
+  if (!schoolId) {
+    return res.status(403).json({ message: "Unauthorized: No schoolId found" });
+  }
   try {
     await poolConnect;
     const request = pool.request();
@@ -182,9 +182,30 @@ const updateTeacher = async (req, res) => {
   }
 };
 
+
+// here is the count no. and more details of the teacher
+
+const getTeacherCounts = async (req, res) => {
+  try {
+    await poolConnect;
+    const schoolId = req.user.schoolId;
+
+    const result = await pool
+      .request()
+      .input("SchoolId", sql.Int, schoolId)
+      .query(`SELECT COUNT(*) AS count FROM dbo.Teacher WHERE SchoolId = @SchoolId`);
+
+    res.status(200).json({ count: result.recordset[0].count });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch teacher count", err });
+  }
+};
+///////////////kkk//////////l///////////ll
+
 module.exports = {
   getAllTeachers,
   getTeacherById,
   addTeacher,
   updateTeacher,
+  getTeacherCounts,
 };
