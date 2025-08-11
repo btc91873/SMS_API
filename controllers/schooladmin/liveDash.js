@@ -25,5 +25,5 @@ const getLiveClasses = async (req, res) => {
         }
     }
 
-}
+} // click
 module.exports = { getLiveClasses }
