@@ -51,7 +51,7 @@ const getClass = async (req, res) => {
   try {
     await poolConnect;
 
-    const result = await pool.request().query("select * from dbo.Sections");
+    const result = await pool.request().query("select * from dbo.Classes");
 
     res.status(200).json({ record: result.recordset });
   } catch (err) {
@@ -59,4 +59,29 @@ const getClass = async (req, res) => {
   }
 };
 
-module.exports = { addClass, getClass };
+// controller of subject
+const getPeriods = async (req, res) => {
+  try {
+    await poolConnect;
+
+    const result = await pool.request().query("select * from dbo.Periods");
+
+    res.status(200).json({ record: result.recordset });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+const getSubjects = async (req, res) => {
+  try {
+    await poolConnect;
+
+    const result = await pool.request().query("select * from dbo.Subjects");
+
+    res.status(200).json({ record: result.recordset });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+module.exports = { addClass, getClass, getPeriods, getSubjects };
