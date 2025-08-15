@@ -1,31 +1,9 @@
-// const { sql, pool, poolConnect } = require("../../connection/connection");
-
-// const addClass = async (req, res) => {
-//   const { className, description } = req.body;
-//   try {
-//     await poolConnect;
-//     await pool
-//       .request()
-//       .input("ClassName", sql.VarChar, className)
-//       .input("Description", sql.VarChar, description)
-//       .query(
-//         "INSERT INTO Classes (ClassName, Description) VALUES (@ClassName, @Description)"
-//       );
-
-//     res.status(201).json({ message: "Class added successfully" });
-//   } catch (err) {
-//     res.status(500).json({ error: err.message });
-//   }
-// };
-
-// module.exports = { addClass };
-
 const { sql, pool, poolConnect } = require("../../connection/connection");
-const { v4: uuidv4 } = require("uuid"); // ✅ Import UUID
+const { v4: uuidv4 } = require("uuid");
 
 const addClass = async (req, res) => {
   const { name, description } = req.body;
-  const classID = uuidv4(); // ✅ Generate unique ClassID
+  const classID = uuidv4();
 
   try {
     await poolConnect;
@@ -41,7 +19,7 @@ const addClass = async (req, res) => {
 
     res.status(200).json({
       message: "Class added successfully",
-      classID, // ✅ Return the new ID
+      classID,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -51,7 +29,14 @@ const getClass = async (req, res) => {
   try {
     await poolConnect;
 
+<<<<<<< HEAD
     const result = await pool.request().query("select * from dbo.Classes");
+=======
+    const result = await pool.request()
+      .query("SELECT ClassID, ClassName, Description FROM dbo.Classes ORDER BY TRY_CAST(ClassName AS INT) ASC");
+
+
+>>>>>>> 00500a6a500a37832471c762414c2403896ed2b4
 
     res.status(200).json({ record: result.recordset });
   } catch (err) {
@@ -59,6 +44,7 @@ const getClass = async (req, res) => {
   }
 };
 
+<<<<<<< HEAD
 // controller of subject
 const getPeriods = async (req, res) => {
   try {
@@ -67,11 +53,34 @@ const getPeriods = async (req, res) => {
     const result = await pool.request().query("select * from dbo.Periods");
 
     res.status(200).json({ record: result.recordset });
+=======
+const updateClass = async (req, res) => {
+  const classId = req.params.id;
+  const { ClassName, Description } = req.body;
+
+  try {
+    await poolConnect;
+
+    await pool
+      .request()
+      .input("ClassID", sql.VarChar, classId)
+      .input("ClassName", sql.NVarChar, ClassName)
+      .input("Description", sql.NVarChar, Description)
+      .query(`
+        UPDATE dbo.classes
+        SET ClassName = @ClassName,
+            Description = @Description
+        WHERE ClassID = @ClassID
+      `);
+
+    res.status(200).json({ message: "Class updated successfully" });
+>>>>>>> 00500a6a500a37832471c762414c2403896ed2b4
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
+<<<<<<< HEAD
 const getSubjects = async (req, res) => {
   try {
     await poolConnect;
@@ -80,8 +89,30 @@ const getSubjects = async (req, res) => {
 
     res.status(200).json({ record: result.recordset });
   } catch (err) {
+=======
+const deleteClass = async (req, res) => {
+  const classId = req.params.id;
+
+  try {
+    await poolConnect;
+
+    await pool
+      .request()
+      .input("ClassID", sql.VarChar, classId)
+      .query("DELETE FROM Classes WHERE ClassID = @ClassID");
+
+    res.status(200).json({ message: "Class deleted successfully" });
+  } catch (err) {
+    console.error("Error deleting class:", err);
+>>>>>>> 00500a6a500a37832471c762414c2403896ed2b4
     res.status(500).json({ error: err.message });
   }
 };
 
+<<<<<<< HEAD
 module.exports = { addClass, getClass, getPeriods, getSubjects };
+=======
+
+
+module.exports = { addClass, getClass, updateClass, deleteClass };
+>>>>>>> 00500a6a500a37832471c762414c2403896ed2b4
